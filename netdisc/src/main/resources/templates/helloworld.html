@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../../../favicon.ico">
+    <!-- Custom styles for this template -->
+    <title>网盘</title>
+    <!-- Bootstrap core CSS -->
+    <link href="/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Custom styles for this template -->
+    <link href="/css/dashboard.css" rel="stylesheet">
+
+</head>
+<form method="get" action="/sign_in" th:if="!${session.user}">
+    <button type="submit" class="btn btn-lg btn-primary btn-block">登陆</button>
+</form>
+<form method="get" action="/sign_up" th:if="!${session.user}">
+    <button type="submit" class="btn btn-lg btn-primary btn-block">注册</button>
+</form>
+<form method="get" action="/user/sign_out_handler" th:if="${session.user}">
+    <button type="submit" class="btn btn-lg btn-primary btn-block">注销</button>
+</form>
+<body>
+<div class="table-responsive">
+    <table class="table table-striped table-sm">
+        <thead>
+        <tr>
+            <th>文件名称</th>
+            <th th:if="${session.user}">下载</th>
+            <th>文件类型</th>
+            <th>文件更改日期
+            <th th:if="${session.user}and!${session.user.identity}">删除</th>
+            <th>文件大小</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="map:${file_array}">
+            <td><a th:href="@{'/index'+${map.file_path}}" th:text="${map.file_name}"></a></td>
+            <td><a th:if="${map.file_absolute_path}and${session.user}" th:href="@{'/load/download?method=attachment&target='+${map.file_absolute_path}}">下载</a> </td>
+            <td th:text="${map.file_type}"></td>
+            <td th:text="${map.last_modified}">ipsum</td>
+            <th><a th:if="${map.file_delete_path}and${session.user}and!${session.user.identity}" th:href="@{'/delete?target='+${map.file_delete_path}}">删除</a></th>
+            <td th:text="${map.size}"></td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+</body>
+<a th:if="${session.user}" th:href="@{'/up?target='+${current}}">
+    <button class="btn btn-lg btn-primary btn-block">在当前目录上传文件</button>
+</a>
+</html>
